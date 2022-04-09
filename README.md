@@ -1,12 +1,15 @@
-# game-simulation
+# Game Simulation
  
-## Available Scripts
+## Instructions to run the project
 
-In the project directory, you can run:
+Open the game_simulation.html using any common explorer (Google Chrome, FireFox, etc).
 
-### `npm install`
+Then you will see a simulation panel with the following functions:
 
-to install all dependencies
+### `Number of briefcases to choose from:`
+
+To choose how many briefcases a contestant will be choosing from (this will be 3 by default according to the requirement).
+And this is a parameter to toggle that I think will be useful although not required in the handout.
 
 ### `npm start`
 
