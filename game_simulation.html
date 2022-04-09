@@ -246,7 +246,7 @@
                 csvString = "data:application/csv," + encodeURIComponent(csvString);
                 let link = document.createElement("a");
                 link.href = csvString;
-                link.download = "data.csv";
+                link.download = "simulation_data.csv";
                 link.innerHTML = "<h2>download</h2>"
                 document.body.appendChild(link);
                 link.click();

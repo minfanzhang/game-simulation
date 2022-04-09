@@ -9,22 +9,31 @@ Then you will see a simulation panel with the following functions:
 ### `Number of briefcases to choose from:`
 
 To choose how many briefcases a contestant will be choosing from (this will be 3 by default according to the requirement).
+
 And this is a parameter to toggle that I think will be useful although not required in the handout.
 
-### `npm start`
+### `User chance to switch:`
 
-This will launch the website
+After the host eliminates the briefcase(s), what percentage of the contestants will choose to switch? This can be 30%, 20%, 50%, etc. So I provide the API to choose this percentage to allow various settings of the simulation.
 
-To login to the application as a User use the following credentials:
+### `Whether the host knows the answer:`
 
-username: Minfan
+Whether the host knows the answer will affect how the host eliminate the briefcase(s) since the host could reveal the winning briefcase by accident if the host does NOT know which one of the briefcases contains the prize. So I provide the API to set whether host knows the answer and allows various settings of the simulation.
 
-password: TA
+## start simulation!
 
-To login to the application as an Admin use the following credentials:
+After setting all the parameters, we click the "start simulation!" button to run the simulation.
 
-username: admin
+The number of prizes given during the simulation will be shown to give a quick impression of whether or not we are giving too many prizes.
 
-password: admin
+Then users could choose to download a CSV file containing detailed information of the simulation:
 
-## User Functionalities
+### `Detailed information of the simulation in the generated CSV file:`
+
+Number of briefcases to choose from: how many briefcases a contestant will be choosing from (this will be 3 by default according to the requirement)
+Host knows the answer: whether the host knows the answer of the winning briefcase
+User switches the choice (for each round): whether the contestant chooses to switch the choice in this round
+Case chosen (for each round): the # of the briefcase chosen by the contestant
+Case contains the prize (for each round): the # of the briefcase containing the prize. 
+Win/Fail (for each round): whether this round is win/fail
+Win by accident (for each round): whether the contestant win by accident (host reveals the prize).
