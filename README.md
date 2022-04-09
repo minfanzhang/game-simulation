@@ -2,7 +2,7 @@
  
 ## Instructions to run the project
 
-Open the game_simulation.html using any common explorer (Google Chrome, FireFox, etc).
+Open the game_simulation.html using any common explorer (Google Chrome, Firefox, etc).
 
 Then you will see a simulation panel with the following functions:
 
@@ -18,7 +18,7 @@ After the host eliminates the briefcase(s), what percentage of the contestants w
 
 ### `Whether the host knows the answer:`
 
-Whether the host knows the answer will affect how the host eliminate the briefcase(s) since the host could reveal the winning briefcase by accident if the host does NOT know which one of the briefcases contains the prize. So I provide the API to set whether host knows the answer and allows various settings of the simulation.
+Whether the host knows the answer will affect how the host eliminates the briefcase(s) since the host could reveal the winning briefcase by accident if the host does NOT know which one of the briefcases contains the prize. So I provide the API to set whether the host knows the answer and allows various settings of the simulation.
 
 ## start simulation!
 
@@ -26,14 +26,20 @@ After setting all the parameters, we click the "start simulation!" button to run
 
 The number of prizes given during the simulation will be shown to give a quick impression of whether or not we are giving too many prizes.
 
-Then users could choose to download a CSV file containing detailed information of the simulation:
+Then users could choose to download a CSV file containing detailed information about the simulation:
 
 ### `Detailed information of the simulation in the generated CSV file:`
 
 Number of briefcases to choose from: how many briefcases a contestant will be choosing from (this will be 3 by default according to the requirement)
-Host knows the answer: whether the host knows the answer of the winning briefcase
-User switches the choice (for each round): whether the contestant chooses to switch the choice in this round
-Case chosen (for each round): the # of the briefcase chosen by the contestant
+
+The host knows the answer: whether the host knows the answer of the winning briefcase
+
+The user switches the choice (for each round): whether the contestant chooses to switch the choice in this round
+
+The case chose (for each round): the # of the briefcase chosen by the contestant
+
 Case contains the prize (for each round): the # of the briefcase containing the prize. 
-Win/Fail (for each round): whether this round is win/fail
+
+Win/Fail (for each round): whether this round is a win/fail
+
 Win by accident (for each round): whether the contestant win by accident (host reveals the prize).
