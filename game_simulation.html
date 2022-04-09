@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Game Simulation</title>
+
+    <style>
+        .table {
+            width: 400px;
+            height: 200px;
+            border: 5px solid #EEEEEE;
+            background-color: #EFFBFB;
+            border-radius: 10px;
+            margin: 2% auto auto;
+            padding-top: 10px;
+        }
+
+        #sub {
+            margin: auto;
+            text-align: center;
+        }
+
+        #briefcaseNum, #changeNum, #rounds {
+            width: 50px;
+        }
+
+        .img {
+            padding-top: 50px;
+            padding-left: 200px;
+        }
+
+
+    </style>
+
+    <script>
+        // This function runs one round of simulation.
+        function oneGame(changeFlag, know) {
+            // Number of briefcases to choose from.
+            let briefcaseNum = document.getElementById("briefcaseNum").value;
+
+            // The # of the winning briefcase and the briefcase that the contestant choose are generated randomly.
+            let briefcaseTrue = Math.floor(Math.random() * briefcaseNum);
+            let briefcaseSelect = Math.floor(Math.random() * briefcaseNum);
+
+            // briefcaseChange is the # of briefcase that is eliminated by the host.
+            let briefcaseChange = 0;
+            // Final choice of the contestant (may or may not switch).
+            let briefcaseLast = 0;
+
+            if (know === 1) {
+                // If the host knows the winning briefcase, then random briefcase is eliminated except for the 
+                // winning one and the one that is already selected
+                while (1) {
+                    briefcaseChange = Math.floor(Math.random() * briefcaseNum);
+                    if (briefcaseChange !== briefcaseTrue && briefcaseChange !== briefcaseSelect) {
+                        break
+                    }
+                }
+            } else {
+                // If the host knows the winning briefcase, then random briefcase is eliminated except for the one that is already selected.
+                while (1) {
+                    briefcaseChange = Math.floor(Math.random() * briefcaseNum);
+                    if (briefcaseChange !== briefcaseSelect) {
+                        // Check if the contestant wins by accident (host reveals the prize).
+                        if (briefcaseChange === briefcaseTrue) {
+                            let win_label = true;
+                            let winByAccident = true;
+                            return [win_label, briefcaseSelect, briefcaseTrue, winByAccident];
+                        }
+                        break
+                    }
+                }
+            }
+
+            // Handles if the contestant wants to switch the choice.
+            if (changeFlag === 1) {
+                while (1) {
+                    briefcaseLast = Math.floor(Math.random() * briefcaseNum);
+                    if (briefcaseLast !== briefcaseChange && briefcaseLast !== briefcaseSelect) {
+                        break
+                    }
+                }
+            } else {
+                briefcaseLast = briefcaseSelect
+            }
+
+            let win_label = briefcaseLast === briefcaseTrue;
+            let winByAccident = false;
+
+            // Return the result of this round.
+            // result contains:
+            // 1. whether the contestant get the prize. 
+            // 2. the # of the briefcase chosen by the contestant.
+            // 3. the # of the briefcase containing the prize. 
+            // 4. whether the contestant win by accident (host reveals the prize).
+            return [win_label, briefcaseLast, briefcaseTrue, winByAccident];
+        }
+
+    </script>
+
+
+</head>
+<body>
+<table class="table">
+    <tr>
+        <td>Number of briefcases to choose from:</td>
+        <td><label for="briefcaseNum"></label><input type="number" id="briefcaseNum" value="3"></td>
+    </tr>
+
+    <tr>
+        <td>Total rounds:</td>
+        <td><label for="rounds"></label><input type="number" id="rounds" value="2000"></td>
+    </tr>
+
+
+    <tr>
+        <td>User chance to switch:</td>
+        <td><label for="changeNum"></label><input type="number" id="changeNum" value="0.25"></td>
+    </tr>
+
+
+    <tr>
+        <td>Host knows the answer<label>
+            <input type="radio" name="hostKnow" id="hostKnow" value="1" checked>
+        </label></td>
+    </tr>
+
+    <tr>
+        <td>Host does NOT know the answer<label>
+            <input type="radio" name="hostKnow" id="hostDontKnow" value="0">
+        </label></td>
+    </tr>
+
+    <tr>
+        <td colspan="2" id="sub"><input type="submit" id="start_sim_button" value="start simulation!"></td>
+    </tr>
+</table>
+
+<script>
+    window.onload = function () {
+        document.getElementById("start_sim_button").onclick = function () {
+
+            // Initialize the CSV file, along with the headers, to store the simulation results.
+            let csvData = [{}];
+            let csvHeader = {round: "Total rounds", 
+                             briefcase_number: "Number of briefcases to choose from",
+                             host_know: "Host knows the answer",
+                             is_change: "User switches the choice", 
+                             caseChosen: "Case chosen", 
+                             caseTrue: "Case contains the prize", 
+                             win_fail: "Win/Fail", 
+                             win_by_accident: "Win by accident"};
+            
+            // Get the total number of rounds to run, and the total number of users who will switch their choices.
+            let rounds = document.getElementById("rounds").value;
+            let TotalChangeNum = Math.floor(document.getElementById("changeNum").value * rounds);
+            let changeNum = TotalChangeNum;
+
+            // changeFlag, used to indicate if the user are going to switch the choice after host revealing.
+            let changeFlag = 0;
+
+            // Initialize knowFlag, which controls if the host know where the prize if.
+            let knowFlag = "unknown";
+            if (document.getElementById("hostKnow").checked) {
+                knowFlag = "know";
+            }
+
+            // Get the number of briefcases to choose from each time (default to 3 according to requirement).
+            let briefcaseNum = document.getElementById("briefcaseNum").value;
+
+            // i indicate the current number of round of simulation we are doing.
+            let i;
+            
+            // Initialize the total number of prizes given and the total number of winnings by accident (host reveals the prize).
+            let winNum = 0;
+            let winByAccidentNum = 0;
+
+            // Looping through all rounds of simulations.
+            for (i = 0; i < rounds; i++) {
+                // We assume this simulation to be fail by default.
+                let winFlag = "fail";
+
+                // changeFlag set to 1 for this round to indicate the user *WILL* switch the choice after host revealing.
+                if (changeNum > 0) {
+                    changeFlag = 1;
+                    changeNum -= 1;
+                } else {
+                    changeFlag = 0;
+                }
+
+                // Get the result of this round.
+                // result contains:
+                // 1. whether the contestant get the prize. 
+                // 2. the # of the briefcase chosen by the contestant.
+                // 3. the # of the briefcase containing the prize. 
+                // 4. whether the contestant win by accident (host reveals the prize).
+                let oneGameResult = oneGame(changeFlag, knowFlag);
+
+                // If the contestant wins, we add one total prizes gained and (if it is the case) count one more winning by accident.
+                if (oneGameResult[0]) {
+                    winNum = winNum + 1;
+                    winFlag = "win";
+                    if (oneGameResult[3]) {
+                        winByAccidentNum = winByAccidentNum + 1;
+                    }
+                }
+
+                // Log the result of this round in our file to be stored as csv.
+                csvData[i]= {round: i + 1,
+                             briefcase_number: briefcaseNum,
+                             host_know: knowFlag,
+                             is_change: changeFlag === 1, 
+                             caseChosen: oneGameResult[1],
+                             caseTrue: oneGameResult[2], 
+                             win_fail: winFlag, 
+                             win_by_accident: oneGameResult[3]};
+            }
+
+            // Summarative statistics of all the simulation rounds.
+            csvData[i + 1]= {round: "Total rounds: " + rounds,
+                             briefcase_number: "Number of briefcases to choose from: " + briefcaseNum,
+                             host_know: "Host knows the answer?: " + knowFlag,
+                             is_change: "Total number of users switching their choices: " + TotalChangeNum, 
+                             caseChosen: "NA", 
+                             caseTrue: "NA", 
+                             win_fail:  "The total number of prizes given: " + winNum,
+                             win_by_accident: "Number of winnings by accident (host reveals the prize): " + winByAccidentNum};
+
+            // Pop-up the total number of prizes given out at the end of the simulation.
+            window.alert("The total number of prizes given out of " + rounds + " rounds is: " + winNum);
+
+            // Save the results for analysis if needed.
+            let r = confirm("Save simulation files as csv?");
+            if (r === true) {
+                csvData.unshift(csvHeader)
+                let csvString = ""
+
+                csvData.map(item => {
+                    Object.keys(csvHeader).map(key => {
+                        let value = item[key]
+                        csvString += value + ','
+                    })
+                    csvString += '\r\n'
+                })
+
+                csvString = "data:application/csv," + encodeURIComponent(csvString);
+                let link = document.createElement("a");
+                link.href = csvString;
+                link.download = "data.csv";
+                link.innerHTML = "<h2>download</h2>"
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+
+    }
+
+</script>
+
+
+</body>
+</html>
